@@ -1,0 +1,24 @@
+{
+  "name": "sd-l1-apx-props-cli",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "tsx --watch ./src/index.ts --i banana --i limon",
+    "test": "vitest",
+    "test:watch": "vitest --watch"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@types/node": "^22.13.4",
+    "inquirer": "^12.4.2",
+    "nanoid": "^5.1.0",
+    "yargs": "^17.7.2"
+  },
+  "devDependencies": {
+    "tsx": "^4.19.2",
+    "vitest": "^3.0.6"
+  }
+}

@@ -1,12 +1,16 @@
+import { capitalize } from "radash";
 import { Inmueble } from "./model";
-
+import colors from "colors";
 export class InmueblesView {
   static showInmueble(inm: Inmueble) {
-    console.log(`
-      ID: ${inm.id}
-      Título: ${inm.titulo}
-      -----------------------
-    `);
+    const text = Object.keys(inm)
+      .map((k) => "> " + colors.cyan(capitalize(k)) + ": " + inm[k])
+      .join("\n");
+    console.log("\n" + text);
+  }
+  static showCreatedInmueble(inm: Inmueble) {
+    console.log(colors.bgGreen(`### Inmueble creado ###`));
+    this.showInmueble(inm);
   }
   static showInmueblesList(inm: Inmueble[]) {
     console.table(inm);

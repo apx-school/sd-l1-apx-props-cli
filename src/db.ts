@@ -9,14 +9,20 @@ export class FileDB implements DB {
   private filePath: string = "";
   constructor(filePath) {
     this.filePath = filePath;
-    console.log("DB connected");
+    console.log("DB running on", this.filePath);
   }
   async write(items) {
     return fs.promises.writeFile(this.filePath, JSON.stringify(items));
   }
   async read() {
-    const buff = await fs.promises.readFile(this.filePath, "utf-8");
-    return JSON.parse(buff);
+    try {
+      const buff = await fs.promises.readFile(this.filePath, "utf-8");
+      return JSON.parse(buff);
+    } catch (error) {
+      if (error.code === "ENOENT") {
+        return [];
+      }
+    }
   }
 }
 

@@ -1,3 +1,7 @@
 notas.md
 node_modules
 dist
+
+# ignoro los json porque no tienen que ser parte del código
+test.json
+inmuebles.json

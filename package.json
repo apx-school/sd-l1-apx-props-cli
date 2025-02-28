@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "tsx --watch ./src/index.ts --i banana --i limon",
+    "dev": "tsx --watch ./src/index.ts",
     "test": "vitest",
     "test:watch": "vitest --watch"
   },
@@ -13,8 +13,10 @@
   "license": "ISC",
   "dependencies": {
     "@types/node": "^22.13.4",
+    "colors": "^1.4.0",
     "inquirer": "^12.4.2",
     "nanoid": "^5.1.0",
+    "radash": "^12.1.0",
     "yargs": "^17.7.2"
   },
   "devDependencies": {

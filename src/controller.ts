@@ -1,4 +1,9 @@
-import { Inmueble, InmueblesModel, SearchInmueblesInputs } from "./model";
+import {
+  CreateInmuebleInput,
+  Inmueble,
+  InmueblesModel,
+  SearchInmueblesInputs,
+} from "./model";
 import { InmueblesView } from "./view";
 
 export class InmueblesController {
@@ -7,12 +12,12 @@ export class InmueblesController {
     this.model = new InmueblesModel();
   }
 
-  async createInmueble(inm: Inmueble): Promise<void> {
+  async createInmueble(inm: CreateInmuebleInput): Promise<void> {
     try {
       const newInmId = await this.model.createInmueble(inm);
       const newInm = await this.model.getInmuebleById(newInmId);
 
-      return InmueblesView.showInmueble(newInm);
+      return InmueblesView.showCreatedInmueble(newInm);
     } catch (error) {
       return InmueblesView.showError(error.message);
     }

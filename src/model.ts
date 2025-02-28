@@ -43,7 +43,7 @@ export class InmueblesModel {
         pass = options.zonas.includes(inm.zona);
       }
 
-      if (options.tipos && pass) {
+      if (options.tipos?.length > 0 && pass) {
         pass = options.tipos.includes(inm.tipo);
       }
 
@@ -92,6 +92,7 @@ export class InmueblesModel {
     if (indexToDelete >= 0) {
       data.splice(indexToDelete, 1);
       this.db.write(data);
+      return true;
     }
 
     return false;

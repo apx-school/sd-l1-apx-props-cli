@@ -3,8 +3,10 @@ import inquirer from "inquirer";
 import yargs from "yargs";
 import { hideBin } from "yargs/helpers";
 import { InmueblesController } from "./controller";
+import { InmueblesView } from "./view";
+import { CreateInmuebleInput, SearchInmueblesInputs } from "./model";
 
-async function createCommandHandler() {
+async function askCreateData(): Promise<CreateInmuebleInput> {
   const respuestas = await inquirer.prompt([
     {
       type: "input",
@@ -77,11 +79,55 @@ async function createCommandHandler() {
   ]);
 
   if (respuestas.confirmar) {
-    console.log({ respuestas });
+    // console.log({ respuestas });
     const { confirmar, ...newInmData } = respuestas;
-    const controller = new InmueblesController();
-    await controller.createInmueble(newInmData);
+    return newInmData;
+  } else {
+    return null;
   }
+}
+async function searchCommandOptions(): Promise<SearchInmueblesInputs> {
+  const respuestas = await inquirer.prompt([
+    {
+      type: "input",
+      name: "ciudad",
+      message: "Ciudad",
+    },
+    {
+      type: "input",
+      name: "zonas",
+      message: "Zonas",
+    },
+    {
+      type: "checkbox",
+      name: "tipos",
+      message: "Tipos de Inmueble",
+      choices: ["departamento", "casa", "ph", "local", "terreno", "oficina"],
+      default: null,
+    },
+    {
+      type: "number",
+      name: "precioMax",
+      message: "Precio Máximo",
+    },
+    {
+      type: "number",
+      name: "precioMin",
+      message: "Precio Mínimo",
+    },
+    {
+      type: "number",
+      name: "minAmbientes",
+      message: "Mínimo de Ambientes",
+    },
+    {
+      type: "number",
+      name: "maxAmbientes",
+      message: "Máximo de Ambientes",
+    },
+  ]);
+
+  return respuestas;
 }
 
 async function processArgv() {
@@ -90,21 +136,55 @@ async function processArgv() {
       "create",
       "Dar de alta un nuevo inmueble",
       () => {},
-      createCommandHandler
+      async (argv) => {
+        const newInmData = await askCreateData();
+        if (newInmData) {
+          const controller = new InmueblesController();
+          await controller.createInmueble(newInmData);
+        } else {
+          // TODO:Ver la forma de hacer el throw
+          // y que lo agarre fail()
+          // throw Error("No aceptaste crear el inmueble");
+          console.error(colors.yellow("No aceptaste crear el inmueble"));
+        }
+      }
     )
+    .command("all", "Obtener todos los inmuebles", function (argv) {
+      console.log("all");
+      const controller = new InmueblesController();
+      return controller.searchInmueble();
+    })
     .command(
-      "get [id]",
-      "make a get HTTP request",
+      "get <id>",
+      "Obtener un inmueble por id",
       function (yargs) {
         yargs.positional("id", {
           describe: "El id del inmueble",
-          // type: "string",
-          default: "1234", // Valor por defecto si no se proporciona
+          type: "string",
         });
       },
       function (argv) {
-        console.log("handler");
-        console.log(argv.id);
+        const controller = new InmueblesController();
+        controller.showInmuebleById(argv.id);
+      }
+    )
+    .command("search", "Busca inmuebles", async function (argv) {
+      const searchOptions = await searchCommandOptions();
+      const controller = new InmueblesController();
+      return controller.searchInmueble(searchOptions);
+    })
+    .command(
+      ["remove <id>", "rm <id>"],
+      "Obtener un inmueble por id",
+      function (yargs) {
+        yargs.positional("id", {
+          describe: "El id del inmueble",
+          type: "string",
+        });
+      },
+      function (argv) {
+        const controller = new InmueblesController();
+        controller.deleteInmueble(argv.id);
       }
     )
     .demandCommand(1, "# Tenés que usar algún comando")
@@ -112,10 +192,12 @@ async function processArgv() {
     .help()
     .strict()
     .fail((msg, err, argv) => {
+      // console.error({ err });
       if (err?.name == "ExitPromptError") {
         console.error(colors.red("# Chau!"));
         process.exit(0);
       } else if (!err) {
+        console.error(colors.yellow(msg), "\n");
         argv.showHelp();
       }
     })

@@ -154,6 +154,17 @@ describe("Search inmueble", async () => {
     expect(foundInmIds).toEqual(expect.arrayContaining([inmB.id]));
   });
 
+  test("Search by empty tipo array", async () => {
+    const foundInm = await model.searchInmueble({
+      tipos: [],
+      zonas: ["zona-b"],
+    });
+
+    const foundInmIds = foundInm.map((inm) => inm.id);
+    expect(foundInm.length).toBe(1);
+    expect(foundInmIds).toEqual(expect.arrayContaining([inmB.id]));
+  });
+
   test("Search by precio", async () => {
     const foundInm = await model.searchInmueble({
       precioMin: 15000,
@@ -247,9 +258,10 @@ test("Delete inmueble", async () => {
 
   const inmToDelete = mocks[2];
 
-  await model.deleteInmueble(inmToDelete.id);
+  const deleted = await model.deleteInmueble(inmToDelete.id);
   const dbAll = await db.read();
 
+  expect(deleted).toBe(true);
   expect(dbAll).toHaveLength(lengthAfterDelete);
   expect(dbAll).not.toContain(inmToDelete);
 });

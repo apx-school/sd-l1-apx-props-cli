@@ -22,11 +22,11 @@ export class InmueblesController {
       return InmueblesView.showError(error.message);
     }
   }
-  async getInmuebleById(id: string): Promise<void> {
+  async showInmuebleById(id: string): Promise<void> {
     const inm = await this.model.getInmuebleById(id);
     return InmueblesView.showInmueble(inm);
   }
-  async searchInmueble(input: SearchInmueblesInputs): Promise<void> {
+  async searchInmueble(input: SearchInmueblesInputs = {}): Promise<void> {
     const inms = await this.model.searchInmueble(input);
     return InmueblesView.showInmueblesList(inms);
   }
@@ -42,7 +42,7 @@ export class InmueblesController {
   async deleteInmueble(inmId: string): Promise<void> {
     const deleted = await this.model.deleteInmueble(inmId);
     if (deleted) {
-      return console.log("Se elimino el inmueble");
+      return console.log("Se elimino el inmueble", inmId);
     } else {
       return InmueblesView.showWarningMessage("No se pudo eliminar");
     }
